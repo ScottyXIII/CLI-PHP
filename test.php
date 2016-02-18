@@ -1,21 +1,28 @@
 <?php 
 
-include("BuildClass.php"); 
+include("BuildModel.php"); 
 	
-$class = new BuildClass("ModelClass");
+$class = new BuildModel();
 
 unset($argv[0]);
 
 if (count($argv) == 0) {
 	PrintHelp();
 } else {
+	$class->class_name = $argv[1];
 	foreach ($argv as $arg) {
-		$class->class_name = $arg;
+
+		if (preg_match("/([-v])\w/", $arg, $r)) {
+			
+		}
+
+		
 		echo $arg;
 		echo "\n";	
 	}
 
 	$class->SaveFile();
+
 } 
 
 

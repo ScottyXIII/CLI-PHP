@@ -1,45 +1,46 @@
 <?php 
+include("PHPGrammer.php"); 
 
 class BuildClass 
 {
 	/*
-	 * Class Name.
+	 * PHP grammer.
 	 */
-	public $class_name;
+	private $grammer;
 
-	/*
-	 * Access modifier used with the class.
-	 */
-	public $class_access_modifier = "public";
-
-	public $extends_class = "CI_model";
-	
 	/*
 	 * Path where our class will be built.
 	 */
 	public $save_path;
 
-	public $vars = array('var1' => 'public', 'var2' => 'private', "AnotherVar" => 'protected');
-
-	protected $PHP_open_tags = '<?php '; 
-
-	public function __construct($class_name, $class_access_modifier = 'public') 
-	{
-		$this->class_access_modifier = $class_access_modifier; 
-		$this->class_name = $class_name;
-
-		$this->SaveFile(); 
+	public function __construct() 
+	{	
+		$this->grammer = new PHPGrammer();
 	}
 
+    public function __get($name) {
+        if (property_exists($this->grammer , $name)) {
+        	return $this->grammer->$name;
+        } else {
+        	echo "no property = ". $name;
+        }
+    }
 
-	public function BuildExtendsClass() 
+    private function BuildStaticClass() 
+	{
+		if ($this->is_static) {
+			return "static ";
+		}
+	}
+
+	private function BuildExtendsClass() 
 	{
 		if (!!$this->extends_class) {
 			return "extends ". $this->extends_class;
 		}
 	}
 
-	public function BuildVars() 
+	private function BuildVars() 
 	{
 		$string = null; 
 		foreach($this->vars as $var => $var_access_mod) {
@@ -54,7 +55,7 @@ class BuildClass
 		// The weird formating is so the newly built class is properly formated.
 		$PHP = $this->PHP_open_tags."
 
-public ".$this->class_name." " .$this->BuildExtendsClass()."
+".$this->BuildStaticClass()."class ".$this->class_name." " .$this->BuildExtendsClass()."
 {
 ".$this->BuildVars()."	
 	public function __construct() 
@@ -64,7 +65,6 @@ public ".$this->class_name." " .$this->BuildExtendsClass()."
 }
 
 		";
-
 
 		return $PHP; 
 	}
